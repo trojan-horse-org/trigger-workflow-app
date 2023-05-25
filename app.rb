@@ -3,17 +3,16 @@ require 'json'
 require 'httparty'
 require 'openssl'
 require 'jwt'
-require 'pry'
 
 # GitHub App configuration
 APP_IDENTIFIER = 4
 WEBHOOK_SECRET = 'your-webhook-secret'
-PRIVATE_KEY_PATH = './add-all-members.2023-05-18.private-key.pem'
-INSTALLATION_ID = '4'
+PRIVATE_KEY_PATH = 'PATH/TO/YOUR/PRIVATE/KEY.pem'
+INSTALLATION_ID = 'your-installation-id'
 # Repository and workflow details
-REPO_OWNER = 'manchester-united-org'
-REPO_NAME = 'add-employees-to-team'
-WORKFLOW_NAME = 'main.yml'
+ORG_OWNER = 'ORGANIZATION-NAME'
+REPO_NAME = 'REPOSITORY-NAME-WHERE-WORKFLOW-IS-STORED'
+WORKFLOW_NAME = 'WORKFLOW-NAME-WITH-YAML-EXTENSION'
 
 # POST route to handle the webhook
 post '/webhook' do
@@ -54,7 +53,7 @@ private_key = OpenSSL::PKey::RSA.new(File.read(PRIVATE_KEY_PATH))
   installation_access_token = request_installation_access_token(jwt_token)
 
   # Trigger the workflow
-  endpoint = "https://ghes-gusshawstewart.uksouth.cloudapp.azure.com/api/v3/repos/#{REPO_OWNER}/#{REPO_NAME}/actions/workflows/#{WORKFLOW_NAME}/dispatches"
+  endpoint = "https://HOSTNAME/api/v3/repos/#{ORG_OWNER}/#{REPO_NAME}/actions/workflows/#{WORKFLOW_NAME}/dispatches"
 
   headers = {
     'Authorization' => "Bearer #{installation_access_token}",
@@ -74,7 +73,7 @@ end
 
 # Method to request the installation access token
 def request_installation_access_token(jwt_token)
-  url = "https://ghes-gusshawstewart.uksouth.cloudapp.azure.com/api/v3/app/installations/#{INSTALLATION_ID}/access_tokens"
+  url = "https://HOSTNAME/api/v3/app/installations/#{INSTALLATION_ID}/access_tokens"
 
   headers = {
     'Accept' => 'application/vnd.github+json',
